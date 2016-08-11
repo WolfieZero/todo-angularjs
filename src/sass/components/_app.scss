@@ -1,0 +1,19 @@
+// =============================================================================
+// App
+// =============================================================================
+
+.app-header {
+    padding-top: 10%;
+    text-align: center;
+}
+
+.app-footer {
+    color: rgba($base-font-color, .5);
+    font-size: 80%;
+    padding: 0 10px 10%;
+    text-align: center;
+
+    a {
+        color: rgba($base-font-color, .5);
+    }
+}

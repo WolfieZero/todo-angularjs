@@ -1,0 +1,20 @@
+{
+  "name": "todo-angularjs",
+  "authors": [
+    "Neil Sweeney"
+  ],
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "public/bower",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "angular-drag-to-reorder": "^0.0.2",
+    "include-media": "^1.4.8",
+    "font-awesome": "^4.6.3"
+  }
+}

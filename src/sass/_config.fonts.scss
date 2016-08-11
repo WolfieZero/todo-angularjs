@@ -1,0 +1,20 @@
+// =============================================================================
+// Fonts
+// =============================================================================
+// Keep consistant font styles throughout the site
+
+
+@mixin font-base {
+    font-family: $base-font-family;
+    font-weight: 300;
+}
+
+@mixin font-code {
+    font-family: $font-family-mono;
+    font-weight: 300;
+}
+
+@mixin font-heading {
+    font-family: $heading-font-family;
+    font-weight: 100;
+}

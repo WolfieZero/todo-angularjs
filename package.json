@@ -1,0 +1,49 @@
+{
+  "name": "todo-angularjs",
+  "version": "1.0.0",
+  "description": "A todo project built with AngularJS",
+  "main": "public/index.html",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/WolfieZero/todo-angularjs.git"
+  },
+  "author": "Neil Sweeney",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/WolfieZero/todo-angularjs/issues"
+  },
+  "homepage": "https://github.com/WolfieZero/todo-angularjs#readme",
+  "devDependencies": {
+    "browser-sync": "^2.14.0",
+    "gulp": "^3.9.1",
+    "gulp-angular-templatecache": "^2.0.0",
+    "gulp-autoprefixer": "^3.1.0",
+    "gulp-babel": "^6.1.2",
+    "gulp-buble": "^0.7.0",
+    "gulp-concat": "^2.6.0",
+    "gulp-csso": "^2.0.0",
+    "gulp-htmlmin": "^2.0.0",
+    "gulp-imagemin": "^3.0.2",
+    "gulp-rollup": "^2.3.0",
+    "gulp-sass": "^2.3.2",
+    "gulp-sourcemaps": "^1.6.0",
+    "gulp-util": "^3.0.7",
+    "imagemin-pngquant": "^5.0.0",
+    "rollup-plugin-buble": "^0.12.1",
+    "rollup-plugin-commonjs": "^3.3.1",
+    "rollup-plugin-node-resolve": "^2.0.0",
+    "rollup-stream": "^1.11.0",
+    "vinyl-buffer": "^1.0.0",
+    "vinyl-source-stream": "^1.1.0"
+  },
+  "dependencies": {
+    "angular": "^1.5.8",
+    "angular-ui-router": "^0.3.1",
+    "jquery": "^3.1.0",
+    "lodash": "^4.14.2",
+    "restangular": "^1.5.2"
+  }
+}

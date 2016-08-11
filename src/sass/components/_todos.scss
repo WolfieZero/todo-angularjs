@@ -1,0 +1,96 @@
+// =============================================================================
+// Todos
+// =============================================================================
+
+
+.todos {
+    width: 95%;
+    margin: 10% auto;
+
+    @include media(">phone") {
+        width: 85%;
+    }
+
+    @include media(">tablet") {
+        width: 60%;
+    }
+}
+
+.todo-edit {
+    border: 0;
+    width: 100%;
+
+    > input {
+        padding: 10px 15px;
+        width: 100%;
+    }
+
+    &--new {
+        border-bottom: 1px solid rgba($base-font-color, .25);
+        border-top: 0;
+        border-right: 0;
+        border-left: 0;
+        font-size: 20px;
+        margin-bottom: 5%;
+        & > .input {
+            text-align: center;
+        }
+    }
+}
+
+
+.todo-list {
+    @include list-no-style;
+}
+
+.todo {
+    border-top: 1px solid rgba($base-font-color, .25);
+    display: flex;
+    width: 100%;
+
+    ._first & {
+        border-top: 0;
+    }
+
+    &__help {
+        color: #999;
+        font-size: 90%;
+        margin-top: -15px;
+        text-align: center;
+    }
+
+    &__view {
+        display: flex;
+        align-items: flex-start;
+        justify-content: left;
+        width: 100%;
+        padding: 10px;
+
+        &.completed {
+            text-decoration: line-through;
+        }
+    }
+
+    &__check {
+        &+label {
+            color: #666;
+            font-size: 20px;
+        }
+    }
+
+    &__task {
+        display: inline-block;
+        flex: 1;
+        padding: 0 10px;
+    }
+
+    &__edit {
+        border: 1px solid #ddd;
+
+        & > input {
+            flex: 1;
+            border: 0;
+            width: 100%;
+        }
+    }
+}

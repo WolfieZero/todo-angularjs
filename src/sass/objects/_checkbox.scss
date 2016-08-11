@@ -1,0 +1,29 @@
+// =============================================================================
+// Fancy Checkbox
+// =============================================================================
+
+.checkbox {
+    display: none;
+
+    +label {
+        color: $base-font-color;
+
+        &:before {
+            content: "\f096";
+            display: inline-block;
+            font-family: FontAwesome;
+            width: 1em;
+        }
+    }
+
+    // &:checked +label:before,
+    &.checked +label:before {
+        content: "\f046";
+    }
+}
+
+
+/* Toggled State */
+input[type=checkbox]:checked ~ div {
+   background: red;
+}

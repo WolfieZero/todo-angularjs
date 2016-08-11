@@ -1,0 +1,58 @@
+// =============================================================================
+// Variables
+// =============================================================================
+
+
+// Colours
+// =============================================================================
+
+$brand-color         : #c09;
+$accessibility-color : #c09;
+
+$background-color    : #fff;
+$base-font-color     : #414042;
+
+$base-link-color     : #c09;
+$hover-link-color    : darken($base-link-color, 25%);
+
+
+// Typography
+// =============================================================================
+
+$base-font-size      : 16px;
+$base-line-height    : $base-font-size * 1.62;
+
+$font-family-sans    : sans-serif;
+$font-family-serif   : serif;
+$font-family-mono    : monospace;
+
+$base-font-family    : $font-family-sans;
+$heading-font-family : 'Helvetica Neue', $font-family-sans;
+
+$heading-font-color  : $base-font-color;
+
+$base-spacing         : $base-font-size;
+$base-spacing-large   : $base-spacing * 2;
+$base-spacing-small   : $base-spacing / 2;
+
+$list-margin         : auto auto 1em 1.5em;
+$list-padding        : auto auto auto 0;
+$list-line-height    : 2em;
+
+
+// Views
+// =============================================================================
+
+$breakpoints: (
+    phone: 320px,
+    tablet: 768px,
+    desktop: 1024px
+);
+
+
+// Layouts
+// =============================================================================
+
+$fluid-width : 90%;
+$fix-width   : 60rem;
+$cols        : 12;
