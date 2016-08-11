@@ -16,11 +16,13 @@ app.directive('todo', [
 
             scope.todo.edit = false;
 
-            element.on('dblclick', () => {
+            scope.editThis = () => {
                 scope.$apply(function () {
                     scope.todo.edit = true;
                 });
-            });
+            }
+
+            element.on('click', scope.editThis);
 
             element.bind('focusout', () => {
                 scope.$apply(function () {
