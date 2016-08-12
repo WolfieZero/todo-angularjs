@@ -10,13 +10,16 @@
 
 a {
     background-color: transparent; // 1
+    border-bottom: 1px solid $base-link-color;
     color: $base-link-color;
+    text-decoration: none;
 
     &:hover,
     &:focus {
+        border-color: $hover-link-color;
         color: $hover-link-color;
+        text-decoration: none;
         outline: 0; // 2
-        text-decoration: underline;
     }
 }
 

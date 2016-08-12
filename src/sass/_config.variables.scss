@@ -12,7 +12,7 @@ $accessibility-color : #c09;
 $background-color    : #fff;
 $base-font-color     : #414042;
 
-$base-link-color     : #c09;
+$base-link-color     : rgba($base-font-color, .5);
 $hover-link-color    : darken($base-link-color, 25%);
 
 

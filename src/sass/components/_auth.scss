@@ -1,0 +1,58 @@
+// =============================================================================
+// Auth
+// =============================================================================
+
+
+.auth {
+    h2, p {
+        text-align: center;
+        margin-bottom: 5%;
+    }
+
+    &__input,
+    &__button {
+        font-size: 110%;
+        width: 60%;
+        text-align: center;
+        margin: 0 auto;
+
+
+        @include media(">tablet") {
+            width: 400px;
+        }
+    }
+
+    &__input {
+        border-bottom: 1px solid rgba($base-font-color, .25);
+        font-size: 110%;
+        padding: 1%;
+    }
+
+    &__button {
+        border: 1px solid rgba($base-font-color, .25);
+        border-radius: 2px;
+
+        &:hover,
+        &:focus,
+        &:active {
+            background-color: rgba($base-font-color, .75);
+            color: #fefefe;
+        }
+    }
+
+}
+
+.auth-logout {
+    background-color: transparent;
+    color: $base-link-color;
+    text-decoration: none;
+    margin: 20px auto;
+
+    &:hover,
+    &:focus {
+        border-color: $hover-link-color;
+        color: $hover-link-color;
+        text-decoration: none;
+        outline: 0;
+    }
+}

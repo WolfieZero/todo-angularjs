@@ -7,11 +7,12 @@
 // =============================================================================
 
 let app = angular.module('app', [
+    'mb-dragToReorder',
+    'restangular',
+    'satellizer',
     'templates',
     'ui.router',
-    'restangular',
-    'underdash',
-    'mb-dragToReorder'
+    'underdash'
 ]);
 
 
@@ -19,10 +20,24 @@ let app = angular.module('app', [
 // =============================================================================
 
 app.run([
-    '$rootScope',
-    ($rootScope) => {
+    '$rootScope', '$state', '$auth', 'Restangular',
+    ($rootScope, $state, $auth, Restangular) => {
 
-        $rootScope.user_id = 1;
+        // Check if authenticated and if so add to params
+        // =====================================================================
+
+        if ($auth.isAuthenticated()) {
+            Restangular.setDefaultRequestParams({ token: $auth.getToken() });
+        }
+
+
+        // Logout
+        // =====================================================================
+
+        $rootScope.logout = () => {
+            $auth.logout();
+            $state.go('login', {});
+        };
 
     }
 ]);

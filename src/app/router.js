@@ -6,7 +6,7 @@ app.config([
     '$stateProvider', '$urlRouterProvider',
     ($stateProvider, $urlRouterProvider) => {
 
-        $urlRouterProvider.otherwise('/todos');
+        $urlRouterProvider.otherwise('login');
 
         $stateProvider
 
@@ -16,10 +16,16 @@ app.config([
                 controller: 'LoginController'
             })
 
-            .state('todos', {
-                url: '/todos',
-                templateUrl: 'todos/todos.html',
-                controller: 'TodosController'
+            .state('signup', {
+                url: '/signup',
+                templateUrl: 'signup/signup.html',
+                controller: 'SignupController'
+            })
+
+            .state('todo', {
+                url: '/todo',
+                templateUrl: 'todo/todos.html',
+                controller: 'TodoController'
             })
 
         ;

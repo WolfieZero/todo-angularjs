@@ -7,11 +7,12 @@
 // =============================================================================
 
 var app = angular.module('app', [
+    'mb-dragToReorder',
+    'restangular',
+    'satellizer',
     'templates',
     'ui.router',
-    'restangular',
-    'underdash',
-    'mb-dragToReorder'
+    'underdash'
 ]);
 
 
@@ -19,10 +20,24 @@ var app = angular.module('app', [
 // =============================================================================
 
 app.run([
-    '$rootScope',
-    function ($rootScope) {
+    '$rootScope', '$state', '$auth', 'Restangular',
+    function ($rootScope, $state, $auth, Restangular) {
 
-        $rootScope.user_id = 1;
+        // Check if authenticated and if so add to params
+        // =====================================================================
+
+        if ($auth.isAuthenticated()) {
+            Restangular.setDefaultRequestParams({ token: $auth.getToken() });
+        }
+
+
+        // Logout
+        // =====================================================================
+
+        $rootScope.logout = function () {
+            $auth.logout();
+            $state.go('login', {});
+        };
 
     }
 ]);
@@ -32,23 +47,30 @@ app.run([
 // =============================================================================
 
 
-app.config(['RestangularProvider', function (RestangularProvider) {
+app.config([
+    'RestangularProvider', '$authProvider',
+    function (RestangularProvider, $authProvider) {
 
-    // Setup Restangular
-    // =========================================================================
-    // We set the base URL but also provide empty keys that we set in `run()`.
+        var baseApiUrl = 'http://todo.boomchinchilla.com/api/';
+        if (window.location.hostname === 'localhost') {
+            baseApiUrl = 'http://todo.app/api/';
+        }
 
-    var baseApiUrl = 'http://todo.boomchinchilla.com/api/';
-    if (window.location.hostname === 'localhost') {
-        baseApiUrl = 'http://todo.app/api/';
+        // Setup Restangular
+        // =====================================================================
+
+        RestangularProvider
+            .setBaseUrl(baseApiUrl)
+        ;
+
+
+        // Setup Auth
+        // =====================================================================
+
+        $authProvider.loginUrl = baseApiUrl + 'auth/login';
+
     }
-
-    RestangularProvider
-        .setBaseUrl(baseApiUrl)
-    ;
-
-
-}]);
+]);
 
 // =============================================================================
 // Routes
@@ -58,7 +80,7 @@ app.config([
     '$stateProvider', '$urlRouterProvider',
     function ($stateProvider, $urlRouterProvider) {
 
-        $urlRouterProvider.otherwise('/todos');
+        $urlRouterProvider.otherwise('login');
 
         $stateProvider
 
@@ -68,13 +90,53 @@ app.config([
                 controller: 'LoginController'
             })
 
-            .state('todos', {
-                url: '/todos',
-                templateUrl: 'todos/todos.html',
-                controller: 'TodosController'
+            .state('signup', {
+                url: '/signup',
+                templateUrl: 'signup/signup.html',
+                controller: 'SignupController'
+            })
+
+            .state('todo', {
+                url: '/todo',
+                templateUrl: 'todo/todos.html',
+                controller: 'TodoController'
             })
 
         ;
+
+    }
+]);
+
+// =============================================================================
+// Login Controller
+// =============================================================================
+
+
+app.controller('LoginController', [
+    '$scope', '$state', '$auth', 'Restangular',
+    function ($scope, $state, $auth, Restangular) {
+
+        var $s = $scope;
+
+        $s.login = function () {
+            var credentials = {
+                email: $s.email,
+                password: $s.password
+            }
+
+            $auth.login(credentials).then(function () {
+
+                var credentials = {
+                    email: $s.email,
+                    password: $s.password
+                };
+
+                $auth.login(credentials).then(function (response) {
+                    Restangular.setDefaultRequestParams({ token: response.data.token });
+                    $state.go('todo', {});
+                });
+            });
+        };
 
     }
 ]);
@@ -122,13 +184,44 @@ var underdash = angular
 );
 
 // =============================================================================
+// Signup Controller
+// =============================================================================
+
+
+app.controller('SignupController', [
+    '$scope', '$state', '$auth', 'Restangular',
+    function ($scope, $state, $auth, Restangular) {
+
+        var $s = $scope;
+
+        $s.signup = function () {
+            var credentials = {
+                name: $s.name,
+                email: $s.email,
+                password: $s.password
+            };
+
+            Restangular.all('auth/signup').post(credentials).then(function () {
+                $auth.login(credentials).then(function (response) {
+                    Restangular.setDefaultRequestParams({ token: response.data.token });
+                    $state.go('todo', {});
+                });
+            }, function () {
+                alert('Cannot create user "' + credentials.email + '"');
+            });
+        };
+
+    }
+]);
+
+// =============================================================================
 // Todos Controller
 // =============================================================================
 
 
-app.controller('TodosController', [
-    '$rootScope', '$scope', '_', 'Todo',
-    function ($rootScope, $scope, _, Todo) {
+app.controller('TodoController', [
+    '$rootScope', '$scope', '$auth', '$state', '_', 'Todo',
+    function ($rootScope, $scope, $auth, $state, _, Todo) {
 
         /**
          * Set the scope locally.
@@ -136,14 +229,29 @@ app.controller('TodosController', [
          */
         var $s = $scope;
 
-        /**
-         * Add todo to list.
-         * @return  {void}
-         */
+
+        // Check we are authenticated
+        // =====================================================================
+
+        if (!$auth.isAuthenticated()) {
+            $state.go('login', {});
+        }
+
+
+        // Get the todo list.
+        // =====================================================================
+
+        Todo.get('all').then(function (todos) {
+            $s.todos = todos;
+        });
+
+
+        // Add todo to list
+        // =====================================================================
+
         $s.addTodo = function () {
             var todo = {
                 task: $s.newTodo,
-                user_id: 1,
                 order: $s.todos.length
             };
             $s.newTodo = '';
@@ -152,9 +260,10 @@ app.controller('TodosController', [
             });
         };
 
-        /**
-         * Delete the todo item.
-         */
+
+        // Delete the todo item.
+        // =====================================================================
+
         $s.delete = function (key) {
             if (confirm('Delete "' + $s.todos[key].task + '"?')) {
                 Todo.doDELETE($s.todos[key].id);
@@ -162,9 +271,10 @@ app.controller('TodosController', [
             }
         };
 
-        /**
-         * React to the todo list being dragged and dropped.
-         */
+
+        // React to the todo list being dragged and dropped.
+        // =====================================================================
+
         $s.$on('dragToReorder.reordered', function ($event, reordered) {
             var newOrder = [];
             var updatedLists = {};
@@ -180,13 +290,6 @@ app.controller('TodosController', [
             Todo.doPUT(updatedLists, 'reorder');
         });
 
-        /**
-         * Get the todo list.
-         */
-        Todo.get('all').then(function (todos) {
-            $s.todos = todos;
-        });
-
     }
 ]);
 
@@ -198,83 +301,94 @@ app.controller('TodosController', [
 app.directive('todo', [
     '$rootScope', '$timeout', 'Todo',
     function ($rootScope, $timeout, Todo) {
-    return {
-        restrict: 'E',
-        templateUrl: 'todos/todo.html',
-        scope: {
-            todo: '=value'
-        },
-        link: function(scope, element) {
+        return {
+            restrict: 'E',
+            templateUrl: 'todo/todo.html',
+            scope: {
+                todo: '=value'
+            },
+            link: function(scope, element) {
 
-            scope.todo.edit = false;
+                /**
+                 * Default `edit` value to false
+                 *
+                 * @type  {Boolean}
+                 */
+                scope.todo.edit = false;
 
-            scope.editThis = function () {
-                scope.$apply(function () {
+
+                // Set `edit` value to true.
+                // =============================================================
+
+                scope.editThis = function () {
                     scope.todo.edit = true;
-                });
-            }
+                };
 
-            element.on('click', scope.editThis);
 
-            element.bind('focusout', function () {
-                scope.$apply(function () {
-                    scope.todo.edit = false;
-                });
-            });
+                // On focus out we set `edit` to false.
+                // =============================================================
 
-            /**
-             * Watch for `todo.complete` changes.
-             */
-            scope.$watch('todo.complete', function (newValue, oldValue) {
-                if (scope.todo.complete == '1') {
-                    scope.todo.complete = true;
-                } else {
-                    scope.todo.complete = false;
-                }
-
-                if (newValue !== oldValue && oldValue !== 0 && oldValue !== 1) {
-                    var updatedTodo = {
-                        task: scope.todo.task,
-                        user_id: $rootScope.user_id,
-                        complete: ((scope.todo.complete) ? '1' : '0')
-                    };
-                    Todo.doPUT(updatedTodo, scope.todo.id);
-                }
-            });
-
-            /**
-             * Watch for `todo.task` changes.
-             */
-            scope.$watch('todo.task', function (newValue, oldValue) {
-                if (newValue !== oldValue) {
-                    var updatedTodo = {
-                        task: newValue,
-                        user_id: $rootScope.user_id,
-                        complete: ((scope.todo.complete) ? '1' : '0')
-                    };
-                    Todo.customPUT(updatedTodo, scope.todo.id);
-                }
-            });
-
-            /**
-             * Watch for on focus changes.
-             * If `todo.edit` is `true` then we need to focus on input field.
-             */
-            scope.$watch('todo.edit', function (value) {
-                if (value === true) {
-                    $timeout(function () {
-                        // Yeah, I'm cheating here...
-                        // TODO Use correct selection method
-                        var input = element[0].children[1].children[0];
-                        input.focus();
-                        input.select();
+                element.bind('focusout', function () {
+                    scope.$apply(function () {
+                        scope.todo.edit = false;
                     });
-                }
-            });
+                });
 
-        }
-    };
-}]);
+
+                // Watch for `todo.complete` changes.
+                // =============================================================
+
+                scope.$watch('todo.complete', function (newValue, oldValue) {
+                    if (scope.todo.complete == '1') {
+                        scope.todo.complete = true;
+                    } else {
+                        scope.todo.complete = false;
+                    }
+
+                    if (newValue !== oldValue && oldValue !== 0 && oldValue !== 1) {
+                        var updatedTodo = {
+                            task: scope.todo.task,
+                            complete: ((scope.todo.complete) ? '1' : '0')
+                        };
+                        Todo.doPUT(updatedTodo, scope.todo.id);
+                    }
+                });
+
+
+                // Watch for `todo.task` changes.
+                // =============================================================
+
+                scope.$watch('todo.task', function (newValue, oldValue) {
+                    if (newValue !== oldValue) {
+                        var updatedTodo = {
+                            task: newValue,
+                            complete: ((scope.todo.complete) ? '1' : '0')
+                        };
+                        Todo.customPUT(updatedTodo, scope.todo.id);
+                    }
+                });
+
+
+                // Watch for on focus changes.
+                // =============================================================
+                // If `todo.edit` is `true` then we need to focus on input field.
+
+                scope.$watch('todo.edit', function (value) {
+                    if (value === true) {
+                        $timeout(function () {
+                            // Yeah, I'm cheating here...
+                            // TODO Use correct selection method
+                            var input = element[0].children[1].children[0];
+                            input.focus();
+                            input.select();
+                        });
+                    }
+                });
+
+            }
+        };
+    }
+]);
 
 // =============================================================================
 // Todos Model

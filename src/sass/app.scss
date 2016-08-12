@@ -42,6 +42,7 @@ $fa-font-path: '../bower/font-awesome/fonts';
 // Reusable objects for non-specific cases.
 
 @import 'objects/checkbox';
+@import 'objects/container';
 @import 'objects/draggable';
 @import 'objects/input';
 
@@ -51,4 +52,5 @@ $fa-font-path: '../bower/font-awesome/fonts';
 // Large objects typically for a specific case.
 
 @import 'components/app';
+@import 'components/auth';
 @import 'components/todos';

@@ -3,20 +3,27 @@
 // =============================================================================
 
 
-app.config(['RestangularProvider', (RestangularProvider) => {
+app.config([
+    'RestangularProvider', '$authProvider',
+    (RestangularProvider, $authProvider) => {
 
-    // Setup Restangular
-    // =========================================================================
-    // We set the base URL but also provide empty keys that we set in `run()`.
+        let baseApiUrl = 'http://todo.boomchinchilla.com/api/';
+        if (window.location.hostname === 'localhost') {
+            baseApiUrl = 'http://todo.app/api/';
+        }
 
-    let baseApiUrl = 'http://todo.boomchinchilla.com/api/';
-    if (window.location.hostname === 'localhost') {
-        baseApiUrl = 'http://todo.app/api/';
+        // Setup Restangular
+        // =====================================================================
+
+        RestangularProvider
+            .setBaseUrl(baseApiUrl)
+        ;
+
+
+        // Setup Auth
+        // =====================================================================
+
+        $authProvider.loginUrl = baseApiUrl + 'auth/login';
+
     }
-
-    RestangularProvider
-        .setBaseUrl(baseApiUrl)
-    ;
-
-
-}]);
+]);
